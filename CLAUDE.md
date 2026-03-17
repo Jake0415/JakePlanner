@@ -118,6 +118,80 @@ interface ApiResponse<T> {
 }
 ```
 
+### REST API 설계 규칙
+
+#### 버전 관리 (필수)
+
+모든 API 엔드포인트는 반드시 버전 프리픽스를 포함해야 합니다:
+
+- **경로 형식**: `/api/v{N}/{resource}`
+- **현재 버전**: `v1`
+- **디렉토리 구조**:
+
+```
+app/api/v1/
+  _shared/          # 공통 미들웨어 (인증, 에러 핸들링)
+  parts/route.ts
+  rfp/route.ts
+  quotation/[id]/route.ts
+```
+
+#### 버전 관리 원칙
+
+1. **신규 API는 항상 최신 버전 디렉토리에 생성**
+2. **Breaking Change 발생 시 새 버전(v2) 디렉토리 생성**, 기존 버전은 유지
+3. **버전 없는 `/api/resource` 경로 생성 금지**
+4. **각 버전 디렉토리에 `_shared/` 폴더로 공통 미들웨어 관리**
+
+#### Breaking Change 정의
+
+다음 변경은 Breaking Change로 간주하여 새 버전이 필요합니다:
+
+- 응답 필드 제거 또는 이름 변경
+- 필수 요청 파라미터 추가
+- 응답 구조 변경 (중첩 구조 변경 등)
+- 인증/권한 방식 변경
+
+다음은 Breaking Change가 아닙니다 (같은 버전에서 가능):
+
+- 응답에 선택적 필드 추가
+- 새 엔드포인트 추가
+- 선택적 요청 파라미터 추가
+- 버그 수정
+
+#### API 엔드포인트 명명 규칙
+
+- **복수형 리소스명**: `/api/v1/parts` (not `/api/v1/part`)
+- **케밥케이스**: `/api/v1/bid-results` (not `/api/v1/bidResults`)
+- **중첩 리소스**: `/api/v1/quotations/[id]/items`
+- **액션 엔드포인트**: `/api/v1/quotations/[id]/export` (동사는 리소스 하위에)
+
+#### API Route 파일 표준 구조
+
+```typescript
+// app/api/v1/{resource}/route.ts
+import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+import type { ApiResponse } from "@/lib/types";
+
+const requestSchema = z.object({ /* ... */ });
+
+export async function GET(request: NextRequest): Promise<NextResponse<ApiResponse<T>>> {
+  try {
+    // 1. 인증 확인
+    // 2. 입력 검증 (Zod)
+    // 3. 비즈니스 로직
+    // 4. ApiResponse<T> 형식으로 응답
+    return NextResponse.json({ success: true, data });
+  } catch (error) {
+    return NextResponse.json(
+      { success: false, error: { code: "INTERNAL_ERROR", message: "서버 오류가 발생했습니다" } },
+      { status: 500 }
+    );
+  }
+}
+```
+
 ### 커스텀 Hook 패턴
 
 - Hook 이름은 `use` 접두사 필수

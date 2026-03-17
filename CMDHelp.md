@@ -67,10 +67,17 @@ npx vercel --prod         # 프로덕션 배포
 
 | 커맨드 | 설명 | 사용 예시 |
 |--------|------|----------|
+| `/design-api [리소스]` | REST API 설계 + 버전 관리 자동 적용 + Route 파일 생성 (api-designer 에이전트) | `/design-api parts CRUD` |
 | `/verify` | 빌드 + 타입 + 린트 + 테스트 + console.log + TODO/FIXME + Git 상태 종합 검증 | `/verify` |
 | `/tdd [기능]` | TDD 사이클 (RED→GREEN→REFACTOR) 강제 실행 | `/tdd 장바구니 금액 계산 함수` |
 | `/checkpoint [설명]` | 현재 작업 상태를 체크포인트로 저장 (WIP 커밋) | `/checkpoint 로그인 UI 완성` |
 | `/update-roadmap` | ROADMAP.md에서 완료된 Task 체크 및 진행상황 업데이트 | `/update-roadmap` |
+
+### 운영 (Operations)
+
+| 커맨드 | 설명 | 사용 예시 |
+|--------|------|----------|
+| `/create-agent [역할]` | 웹 리서치 기반으로 새 전문 에이전트를 설계/생성하고 팀에 등록 | `/create-agent 프론트엔드 성능 최적화 전문가` |
 
 ### 프로젝트 초기화
 
@@ -93,6 +100,8 @@ npx vercel --prod         # 프로덕션 배포
 | **prd-generator** | PRD 작성 (7개 섹션, 기능ID 체계) | `/prd-generate [아이디어]` |
 | **prd-validator** | PRD Chain of Thought 기술 검증 | `/prd-validate [경로]` |
 | **development-planner** | ROADMAP.md 생성 (구조 우선 접근법) | 직접 대화로 호출 |
+| **api-designer** | REST API 설계, 버전 관리, Route 생성 | `/design-api [리소스]` |
+| **agent-creator** | 새 에이전트 리서치 및 생성, 팀 등록 | `/create-agent [역할]` |
 
 ---
 
@@ -130,4 +139,6 @@ PRD 검증:      /prd-validate
 코드 검증:     /verify
 체크포인트:    /checkpoint [설명]
 로드맵 업데이트: /update-roadmap
+API 설계:       /design-api [리소스]
+에이전트 생성:  /create-agent [역할]
 ```
